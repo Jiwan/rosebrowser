@@ -23,6 +23,14 @@ if (!config.data || !(config.data.local || config.data.remote)) {
     process.exit(0);
 }
 
+function streamToBuffer(sourceStream, callback) {
+    var bufs = [];
+    sourceStream.on('data', function(d){ bufs.push(d); });
+    sourceStream.on('end', function() {
+        callback(null, Buffer.concat(bufs));
+    });
+}
+
 class Cacher {
     private _path: string = "";
 
@@ -92,6 +100,13 @@ io.on('connection', (socket) => {
                 sockets[i].end();
             }
         }
+    });
+    socket.on('fr', (reqIdx, path) => {
+        cache.getStream(path, (err, sourceStream) => {
+            streamToBuffer(sourceStream, (err, sourceBuf) => {
+                socket.emit('fr', reqIdx, sourceBuf);
+            });
+        });
     });
     socket.on('tc', (sockIdx, host, port) => {
         console.log('tc', sockIdx, host, port);

@@ -13,6 +13,29 @@
     </style>
 </head>
 <body>
+
+<script id="terrainVertexShader" type="x-shader/x-vertex">
+    varying vec2 vUv1;
+    varying vec2 vUv2;
+    void main() {
+        vUv1 = uv;
+        vUv2 = uv2;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+</script>
+
+<script id="terrainFragmentShader" type="x-shader/x-fragment">
+    uniform sampler2D texture1;
+    uniform sampler2D texture2;
+    varying vec2 vUv1;
+    varying vec2 vUv2;
+    void main() {
+        vec4 layer1 = texture2D(texture1, vUv1);
+        vec4 layer2 = texture2D(texture2, vUv2);
+        gl_FragColor = mix(layer1, layer2, layer2.a);
+    }
+</script>
+
 <!-- Various needed utilities -->
 <script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
 
@@ -26,8 +49,13 @@
 <script src="js/dat.gui.js"></script>
 
 <!-- ThreeJS for Rendering -->
+<script src="js/stats.min.js"></script>
 <script src="js/three.js"></script>
 <script src="js/threeoctree.js"></script>
+
+<!-- TextDecoder & TextEncoder polyfill -->
+<script src="js/encoding.js"></script>
+<script src="js/encoding-indexes.js"></script>
 
 <!-- GameCode for Game! -->
 <script src="js/util/binaryreader.js"></script>
@@ -35,34 +63,45 @@
 <script src="js/util/generic.js"></script>
 
 <!-- Game Networking -->
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/net/socket.js"></script>
-<script src="/js/net/rosepacket.js"></script>
-<script src="/js/net/rosesocket.js"></script>
-<script src="/js/net/loginclient.js"></script>
-<script src="/js/net/worldclient.js"></script>
-<script src="/js/net/gameclient.js"></script>
+<script src="socket.io/socket.io.js"></script>
+<script src="js/net/socket.js"></script>
+<script src="js/net/rosepacket.js"></script>
+<script src="js/net/rosesocket.js"></script>
+<script src="js/net/loginclient.js"></script>
+<script src="js/net/worldclient.js"></script>
+<script src="js/net/gameclient.js"></script>
 
 <!-- Game Loaders -->
 <script src="js/loaders/chr.js"></script>
 <script src="js/loaders/dds.js"></script>
+<script src="js/loaders/eft.js"></script>
 <script src="js/loaders/him.js"></script>
 <script src="js/loaders/ifo.js"></script>
+<script src="js/loaders/ptl.js"></script>
 <script src="js/loaders/rose.js"></script>
+<script src="js/loaders/til.js"></script>
+<script src="js/loaders/stb.js"></script>
 <script src="js/loaders/zmd.js"></script>
 <script src="js/loaders/zmo.js"></script>
 <script src="js/loaders/zms.js"></script>
+<script src="js/loaders/zon.js"></script>
 <script src="js/loaders/zsc.js"></script>
 
 <!-- Game Helpers -->
-<script src="js/helpers/datamanager.js"></script>
 <script src="js/controls/orbit.js"></script>
+<script src="js/controls/fly.js"></script>
+<script src="js/helpers/datamanager.js"></script>
 <script src="js/helpers/temporary.js"></script>
 <script src="js/helpers/rosetexloader.js"></script>
 <script src="js/helpers/rosetexmanager.js"></script>
 <script src="js/helpers/cameraanimator.js"></script>
 <script src="js/helpers/modellistmanager.js"></script>
+<script src="js/helpers/mapbounds.js"></script>
 <script src="js/helpers/worldmanager.js"></script>
+<script src="js/helpers/netmanager.js"></script>
+<script src="js/helpers/gameobjectmanager.js"></script>
+<script src="js/helpers/gomvismanager.js"></script>
+<script src="js/gamedata/mycharacter.js"></script>
 
 <!-- Game Dialogs -->
 <script src="js/dialogs/login.js"></script>
@@ -71,6 +110,8 @@
 <!-- Helper Objects -->
 <script src="js/objects/npccharacter.js"></script>
 <script src="js/objects/avatar.js"></script>
+<script src="js/objects/gameobject.js"></script>
+<script src="js/objects/npcobject.js"></script>
 
 <!-- Game States -->
 <script src="js/states/teststate.js"></script>

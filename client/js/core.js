@@ -37,6 +37,15 @@ camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 camera.position.add(new THREE.Vector3(5200, 5200, 0));
 
+// Auto resize canvas
+window.addEventListener('resize', onWindowResize, false);
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize( window.innerWidth, window.innerHeight );
+}
+
 // Default material for testing with
 var defaultMat = new THREE.MeshPhongMaterial({ambient: 0x030303, color: 0xdddddd, specular: 0x009900, shininess: 30, shading: THREE.FlatShading});
 
@@ -47,9 +56,18 @@ var debugGui = new dat.GUI();
 
 var activeGameState = null;
 
+// FPS / MS indicator
+var stats = new Stats();
+stats.setMode(1); // 0: FPS, 1: MS
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.left = '0px';
+stats.domElement.style.top = '0px';
+document.body.appendChild( stats.domElement );
+
 var clock = new THREE.Clock();
 var renderFrame = function () {
   requestAnimationFrame(renderFrame, renderer.domElement);
+  stats.begin();
 
   var delta = clock.getDelta();
   THREE.AnimationHandler.update( delta );
@@ -59,6 +77,7 @@ var renderFrame = function () {
   }
 
   renderer.render(scene, camera);
+  stats.end();
 };
 renderFrame();
 
@@ -67,13 +86,13 @@ console.log('Launching game with state `' + launchStateName + '`');
 
 var launchGameState = null;
 if (launchStateName === 'test') {
-  launchGameState = new TestState();
+  launchGameState = gsTest;
 } else if (launchStateName === 'nettest') {
-  launchGameState = new NetTestState();
+  launchGameState = gsNetTest;
 } else if (launchStateName === 'login') {
-  launchGameState = new LoginState();
+  launchGameState = gsLogin;
 } else if (launchStateName === 'gametest') {
-  launchGameState = new GameTestState();
+  launchGameState = gsGameTest;
 } else {
   console.log('Invalid launch state specified.');
 }
@@ -89,12 +108,7 @@ if (launchGameState) {
   });
 }
 
-
-// Global Game Variables
-var netLogin = null;
-var netWorld = null;
-var netGame = null;
-
+GDM.register('list_zone', DataTable, '3DDATA/STB/LIST_ZONE.STB');
 
 GDM.register('npc_chars', CharacterList, '3DDATA/NPC/LIST_NPC.CHR');
 GDM.register('npc_models', ModelListManager, '3DDATA/NPC/PART_NPC.ZSC');
@@ -118,9 +132,8 @@ GDM.register('itm_ffoot', ModelListManager, '3DDATA/AVATAR/LIST_FFOOT.ZSC');
 
 GDM.register('itm_faceitem', ModelListManager, '3DDATA/AVATAR/LIST_FACEITEM.ZSC');
 GDM.register('itm_back', ModelListManager, '3DDATA/AVATAR/LIST_BACK.ZSC');
-GDM.register('itm_weapon', ModelListManager, '3DDATA/AVATAR/LIST_WEAPON.ZSC');
-GDM.register('itm_subwpn', ModelListManager, '3DDATA/AVATAR/LIST_SUBWPN.ZSC');
-
+GDM.register('itm_weapon', ModelListManager, '3DDATA/WEAPON/LIST_WEAPON.ZSC');
+GDM.register('itm_subwpn', ModelListManager, '3DDATA/WEAPON/LIST_SUBWPN.ZSC');
 
 
 /*
@@ -222,7 +235,7 @@ avatarGrp.load(function(loadedObjs) {
 /*
 var coreGrp = new GroupLoader();
 coreGrp.add('list_npc_chr', CharacterList, '3DDATA/NPC/LIST_NPC.CHR');
-coreGrp.add('part_npc_zsc', ZSCLoader, '3DDATA/NPC/PART_NPC.ZSC');
+coreGrp.add('part_npc_zsc', ModelList, '3DDATA/NPC/PART_NPC.ZSC');
 coreGrp.load(function(loadedObjs) {
   var chrData = loadedObjs['list_npc_chr'];
   var zscData = loadedObjs['part_npc_zsc'];
@@ -312,7 +325,7 @@ scene.add(rootObj);
 Mesh.load('3DDATA/NPC/PLANT/JELLYBEAN1/BODY02.ZMS', function (geometry) {
   Mesh.load('3DDATA/NPC/PLANT/JELLYBEAN1/BODY01.ZMS', function (geometry2) {
     Skeleton.load('3DDATA/NPC/PLANT/JELLYBEAN1/JELLYBEAN2_BONE.ZMD', function(zmdData) {
-      ZMOLoader.load('3DDATA/MOTION/NPC/JELLYBEAN1/JELLYBEAN1_WALK.ZMO', function(zmoData) {
+      Animation.load('3DDATA/MOTION/NPC/JELLYBEAN1/JELLYBEAN1_WALK.ZMO', function(zmoData) {
         var skel = zmdData.create(rootObj);
 
         cube = new THREE.SkinnedMesh(geometry, material1);
