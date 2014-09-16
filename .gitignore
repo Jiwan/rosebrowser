@@ -1,5 +1,6 @@
+/.tscache/
 /.idea/
 /node_modules/
 /cache/
 /server/config.yml
-*.js
+server/*.js*
