@@ -1,0 +1,5 @@
+default:
+  data:
+    local: 'D:/rosedata/'
+    client_path: '../client'
+    #remote: 'http://mywebsite.com:88/rosedata/'

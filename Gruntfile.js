@@ -19,11 +19,19 @@ module.exports = function (grunt) {
       	  module: 'commonjs',
       	  sourceMap: true
       	}
+      },
+      tools: {
+        src: ['tools/*.ts'],
+        options: {
+          target: 'es5',
+          module: 'commonjs',
+          sourceMap: false
+        }
       }
     }
   });
 
   grunt.loadNpmTasks('grunt-ts');
   
-  grunt.registerTask('default', ['ts:server', 'ts:client']);
+  grunt.registerTask('default', ['ts:server', 'ts:client', 'ts:tools']);
 };
