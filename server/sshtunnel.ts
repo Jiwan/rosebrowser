@@ -4,9 +4,9 @@ var Connection = require('ssh2');
 import net = require('net');
 
 export class SSHTunnel {
-    private _verbose: boolean = false;
+    private _verbose: boolean;
 
-    private _config: any = null;
+    private _config: any;
 
     private _server: any = null;
 

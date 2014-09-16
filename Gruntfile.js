@@ -12,7 +12,7 @@ module.exports = function (grunt) {
       	}
       },
       client: {
-        src: ['client/*.ts'],
+        src: ['client/ts/**/*.ts'],
         out: 'client/js/client.js',
         options: {
       	  target: 'es5',

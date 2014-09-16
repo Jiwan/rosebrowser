@@ -4,7 +4,9 @@
 /cache/
 /server/config.yml
 /tools/config.yml
-server/*.js*
-tools/*.js*
+client/js/client.js*
+client/ts/**/*.js*
+server/**.js*
+tools/**.js*
 *.d.ts
 client/js/helpers/mapbounds.js
